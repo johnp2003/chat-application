@@ -5,6 +5,14 @@ import Field from '@/components/Field';
 import Checkbox from '@/components/Checkbox';
 
 const SignUp = ({ setIsSignUp }) => {
+    const [formData, setFormData] = useState({
+      email: '',
+      name: '',
+      password: '',
+      confirmPassword: '',
+      agreeEmail: false,
+      conditions: false,
+    });
     //useState initialization
     
     const [error, setError] = useState('');
@@ -12,15 +20,25 @@ const SignUp = ({ setIsSignUp }) => {
 
     const handleChange = (e) => {
         //handleChange function
+        const { name, value } = e.target;
+        setFormData((formData) => ({ ...formData, [name]: value }));
     };
 
 
     const handleCheckboxChange = (field) => {
         //handleCheckboxChange function
+        setFormData((formData) => ({ ...formData, [field]: !formData[field] }));
     };
 
     const validateForm = () => {
         //validateForm function
+        if(!formData.email) return 'Email is required';
+        if(!formData.name) return 'Name is required';
+        if(!formData.password) return 'Password is required';
+        if(!formData.confirmPassword) return 'Confirm Password is required';
+        if(formData.password !== formData.confirmPassword) return 'Passwords do not match';
+        if(!formData.conditions) return 'You must agree to the terms and conditions';
+        return null;
     };
 
     const register = async (event) => {
@@ -61,30 +79,83 @@ const SignUp = ({ setIsSignUp }) => {
     };
 
     return (
-        <div>
-            <div className='mb-1 text-h1'>Sign up</div>
-            <div className='mb-12 text-sm text-n-2 dark:text-white/50'>
-                Before we start, please enter your details
-            </div>
-            <form onSubmit={register}>
-                {error && <p className='text-red-500 mb-4'>{error}</p>}
-
-                {/* Email Field */}
-                {/* Name Field */}
-                {/* Password Field */}
-                {/* Confirm Password Field */}
-                {/* Agree Email Checkbox */}
-                {/* Conditions Checkbox */}
-
-                <button
-                    className='btn-purple btn-shadow w-full h-14'
-                    type='submit'
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? 'Creating...' : 'Create account'}
-                </button>
-            </form>
+      <div>
+        <div className="mb-1 text-h1">Sign up</div>
+        <div className="mb-12 text-sm text-n-2 dark:text-white/50">
+          Before we start, please enter your details
         </div>
+        <form onSubmit={register}>
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+
+          {/* Email Field */}
+          <Field
+            className="mb-4.5"
+            label="Email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            icon="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+
+          {/* Name Field */}
+          <Field
+            className="mb-4.5"
+            label="Name"
+            name="name"
+            type="text"
+            placeholder="Enter your name"
+            icon="smile"
+            value={formData.name}
+            onChange={handleChange}
+          />
+
+          {/* Password Field */}
+          <Field
+            className="mb-4.5"
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+
+          {/* Confirm Password Field */}
+          <Field
+            className="mb-4.5"
+            label="Password"
+            name="confirmPassword"
+            type="password"
+            placeholder="Enter your password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+          />
+
+          {/* Agree Email Checkbox */}
+          <Checkbox
+            label="I agree to receive emails"
+            value={formData.agreeEmail}
+            onChange={() => handleCheckboxChange('agreeEmail')}
+          />
+          
+          {/* Conditions Checkbox */}
+          <Checkbox
+            label="I agree to the terms and conditions"
+            value={formData.conditions}
+            onChange={() => handleCheckboxChange('conditions')}
+          />
+
+          <button
+            className="btn-purple btn-shadow w-full h-14"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Creating...' : 'Create account'}
+          </button>
+        </form>
+      </div>
     );
 };
 
